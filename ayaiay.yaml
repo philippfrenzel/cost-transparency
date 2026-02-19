@@ -1,0 +1,361 @@
+version: '1.0'
+name: cost-transparency
+description: Kostentransparenz-Analysator fuer Anlageprodukte. Zerlegt Gesamtkosten (TER, Spread, Tracking Difference, Performance
+  Fee, Stempelsteuer, Quellensteuer-Drag) und berechnet die Kostenwirkung ueber 10/20/30 Jahre. Schweizer Kontext.
+author: Philipp Frenzel
+license: MIT
+repository: https://github.com/philippfrenzel/cost-transparency
+tags:
+- finance
+- cost-analysis
+- etf
+- investment
+- switzerland
+- ter
+- fee-transparency
+- portfolio
+skills:
+- name: cost-transparency
+  description: 'Kostentransparenz-Analysator: TER-Zerlegung, versteckte Kosten, Produktvergleiche, Kostenwirkung ueber Zeit'
+  content: "---\nname: cost-transparency\ndescription: Kostentransparenz-Analysator fuer Anlageprodukte. Zerlegt die Gesamtkosten\
+    \ von ETFs, Fonds, Versicherungsprodukten, 3a-Loesungen, Strukturierten Produkten und Robo-Advisors in ihre Einzelbestandteile\
+    \ (TER-Komponenten, Transaktionskosten, Spread, Performance Fee, Stempelsteuer, Quellensteuer-Drag). Berechnet die Kostenwirkung\
+    \ ueber Zeit (10/20/30 Jahre) und zeigt, wie viel Rendite durch Kosten verloren geht. Benchmarkt jedes Produkt gegen guenstigere\
+    \ Alternativen. Schweizer Kontext als Standard. Triggert bei Fragen zu Kosten, TER, Gebuehren, Kostentransparenz, Produktkosten,\
+    \ Spread, Kostenvergleich, was kostet mein Portfolio, versteckte Kosten, Tracking Difference, Performance Fee, Gebuehrenvergleich,\
+    \ Anlagekosten, Total Cost of Ownership, Kostenwirkung.\n---\n\n# Kostentransparenz — Anlagekosten-Analysator\n\n## Overview\n\
+    \nDieser Skill macht die Gesamtkosten von Anlageprodukten vollstaendig transparent. Er geht weit ueber die TER hinaus:\
+    \ Versteckte Kosten (Spread, Tracking Difference, Performance Fee, Swing Pricing), Transaktionskosten, Stempel- und Quellensteuer-Drag\
+    \ werden systematisch erfasst. Der Kern ist die **Kostenwirkung ueber Zeit** — wie viel CHF Rendite gehen durch Kosten\
+    \ ueber 10, 20, 30 Jahre verloren?\n\n**Standardkontext:** Schweiz (CHF, Stempelsteuer, Verrechnungssteuer, Saeule 3a).\
+    \ Bei anderen Laendern werden die Referenzdaten entsprechend angepasst.\n\n**Abgrenzung zu asset-allocation:** Der asset-allocation\
+    \ Skill enthaelt eine Kostenanalyse auf Portfolioebene (gewichtete TER, Gesamtkosten). Dieser Skill geht tiefer: Einzelprodukt-Zerlegung,\
+    \ versteckte Kostenschichten, Produkt-Vergleiche, und vor allem die **Zeitwirkung** (CHF-Betraege, die ueber Jahre verloren\
+    \ gehen).\n\n**Companion Skills:**\n- **asset-allocation:** Liefert Produktliste und Allokation als Input (JSON-Import\
+    \ moeglich).\n- **risk-profile:** Liefert Risikoprofil fuer Kontext-Einordnung.\n\n**Wichtig:** Weise den Nutzer zu Beginn\
+    \ darauf hin, dass diese Kostenanalyse keine professionelle Finanz- oder Anlageberatung ersetzt. Kostenvergleiche und\
+    \ Optimierungsvorschlaege sind Orientierungshilfen — vor einer Umsetzung sollte eine individuelle Pruefung erfolgen.\n\
+    \n## Workflow\n\nFuehre den Nutzer durch die folgenden 5 Phasen. Stelle in jeder Phase gezielte Fragen conversational\
+    \ (nicht als starres Formular) und fasse die Antworten zusammen, bevor du zur naechsten Phase uebergehst. Passe die Sprache\
+    \ an den Nutzer an (Deutsch/Englisch).\n\n---\n\n### Phase 1 — Produkt-Erfassung\n\nZiel: Anlageprodukte mit Basisdaten\
+    \ erfassen.\n\n**1.1 Import oder manuelle Erfassung:**\n\nFrage den Nutzer, ob ein Portfolio-Blueprint aus dem asset-allocation\
+    \ Skill vorliegt:\n- **Ja, JSON vorhanden:** Nutzer stellt `portfolio-blueprint-*.json` bereit → importiere `instrumente.core[]`,\
+    \ `instrumente.satellite[]`, `saule_3a`, `kosten.*`. Bestaetige die importierten Produkte.\n- **Nein, manuelle Erfassung:**\
+    \ Erfasse die Produkte einzeln.\n\n**1.2 Produkte erfassen:**\n\nErfasse fuer jedes Anlageprodukt:\n\n| Feld | Details\
+    \ |\n|------|---------|\n| Produkttyp | ETF / Aktiver Fonds / Versicherungs-Mantel (3b-Police) / Strukturiertes Produkt\
+    \ / Robo-Advisor / Bank-Vermoegensverwaltung / Saeule-3a-Loesung / Einzeltitel |\n| Name / ISIN | Produktname und/oder\
+    \ ISIN-Nummer |\n| Anbieter / Emittent | Fondsgesellschaft, Versicherung, Bank |\n| Anlagebetrag (CHF) | Aktueller Wert\
+    \ oder geplante Investition |\n| Bekannte Kosten | TER, Verwaltungsgebuehr, Ausgabekommission — was der Nutzer bereits\
+    \ kennt |\n| Broker / Depotbank | Wo das Produkt gehalten wird (fuer Depot- und Transaktionskosten) |\n\n**Unterstuetzte\
+    \ Produkttypen:**\n\n| Produkttyp | Typische Kostenschichten |\n|-----------|------------------------|\n| ETF (Index)\
+    \ | TER, Spread, Tracking Difference, Stempelsteuer, Depotgebuehr |\n| Aktiver Fonds | TER (hoeher), Performance Fee,\
+    \ Ausgabekommission, Spread, Stempelsteuer |\n| Versicherungs-Mantel (3b) | Versicherungskosten, Verwaltung, eingebettete\
+    \ Fondskosten, Rueckkaufswert-Abzug |\n| Strukturiertes Produkt | Emittenten-Marge, Hedging-Kosten, Spread, ggf. Coupon-Reduktion\
+    \ |\n| Robo-Advisor | All-in-Fee, eingebettete ETF-Kosten, Rebalancing-Kosten |\n| Bank-Vermoegensverwaltung | Verwaltungsmandat-Gebuehr,\
+    \ eingebettete Fondskosten, Courtagen, Retrozessionen |\n| Saeule 3a (Wertschriften) | Verwaltungsgebuehr, eingebettete\
+    \ Fondskosten, ggf. Depot- und Wechselgebuehren |\n| Einzeltitel (Aktien) | Courtage, Spread, Stempelsteuer, Depotgebuehr\
+    \ (keine laufende TER) |\n\nNach Erfassung: Produktliste mit Basisdaten zur Bestaetigung.\n\n---\n\n### Phase 2 — Kosten-Zerlegung\n\
+    \nZiel: Jedes Produkt in seine Kostenbestandteile zerlegen und einen Kosten-Wasserfall erstellen.\n\nLade `references/swiss-cost-reference.md`\
+    \ als Referenz.\n\n**2.1 TER-Zerlegung:**\n\nFuer jeden Fonds/ETF: Zerlege die TER in ihre Komponenten (soweit bekannt/schaetzbar):\n\
+    \n| TER-Komponente | Typischer Anteil | Beschreibung |\n|---------------|-----------------|-------------|\n| Verwaltungsgebuehr\
+    \ | 50-70% der TER | Fondsmanagement, Research, Admin |\n| Depotbankgebuehr | 5-15% der TER | Verwahrung der Fondsvermoegen\
+    \ |\n| Index-Lizenzgebuehr | 3-10% der TER (nur Index-ETFs) | Lizenz fuer Index-Nutzung (MSCI, FTSE etc.) |\n| Vertriebsgebuehr\
+    \ / Retrozession | 0-30% der TER (aktive Fonds) | Vergütung an Vertriebspartner |\n| Sonstige (Revision, Regulierung)\
+    \ | 5-10% der TER | Pruefungskosten, regulatorische Kosten |\n\n**2.2 Kosten AUSSERHALB der TER:**\n\n| Kostenschicht\
+    \ | Beschreibung | Typische Hoehe |\n|--------------|-------------|---------------|\n| **Transaktionskosten (fondsinttern)**\
+    \ | Kauf-/Verkaufskosten innerhalb des Fonds bei Rebalancing/Indexanpassung | 0.01-0.15% p.a. |\n| **Bid-Ask-Spread**\
+    \ | Differenz zwischen Kauf- und Verkaufskurs beim Handel | 0.02-0.50% (einmalig pro Trade) |\n| **Tracking Difference**\
+    \ | Tatsaechliche Abweichung vom Index (kann besser oder schlechter als TER sein) | -0.10% bis +0.50% p.a. |\n| **Performance\
+    \ Fee** | Erfolgsabhaengige Gebuehr (nur aktive Fonds/Hedge Funds) | 10-20% der Outperformance |\n| **Ausgabekommission\
+    \ (Agio)** | Einmalige Gebuehr beim Kauf (aktive Fonds, Bankvertrieb) | 0-5% einmalig |\n| **Ruecknahmekommission** |\
+    \ Einmalige Gebuehr beim Verkauf | 0-1% einmalig |\n| **Swing Pricing** | Verwässerungsschutz bei grossen Mittelzu-/-abfluessen\
+    \ | 0-0.50% (situativ) |\n| **Depotgebuehr (Broker)** | Jaehrliche Verwahrungsgebuehr beim Broker | CHF 0-200/Jahr |\n\
+    | **Courtage (Broker)** | Transaktionsgebuehr beim Kauf/Verkauf | CHF 1-50 pro Trade |\n| **Stempelsteuer** | Eidg. Umsatzabgabe\
+    \ | 0.075% CH / 0.150% Ausland pro Trade |\n| **Quellensteuer-Drag** | Nicht rueckforderbare Quellensteuer je nach Fondsdomizil\
+    \ und DBA | 0-0.30% p.a. |\n| **Waehrungsumrechnungs-Kosten** | Spread bei Waehrungskonversion (Broker oder Fonds) | 0.10-0.50%\
+    \ pro Konversion |\n\n**2.3 Kosten-Wasserfall erstellen:**\n\nErstelle pro Produkt einen Kosten-Wasserfall:\n\n```\nProdukt:\
+    \ {Name} ({ISIN})\nAnlagebetrag: CHF {Betrag}\n─────────────────────────────────────────\nLaufende Kosten (p.a.):\n  TER\
+    \ (ausgewiesen)              {x.xx}%\n  + Transaktionskosten intern    {x.xx}%\n  + Tracking-Difference-Aufschlag{x.xx}%\n\
+    \  + Performance Fee (geschaetzt) {x.xx}%\n  + Quellensteuer-Drag           {x.xx}%\n  ─────────────────────────────────\n\
+    \  = Effektive laufende Kosten    {x.xx}% = CHF {Betrag}/Jahr\n\nEinmalige Kosten (pro Kauf):\n  Ausgabekommission   \
+    \           {x.xx}%\n  + Spread (geschaetzt)          {x.xx}%\n  + Courtage (Broker)            CHF {x}\n  + Stempelsteuer\
+    \                {x.xx}%\n  ─────────────────────────────────\n  = Einmalige Kosten             {x.xx}% = CHF {Betrag}\n\
+    \nJaehrliche Depot-/Plattformkosten:\n  Depotgebuehr                   CHF {x}/Jahr\n  ─────────────────────────────────\n\
+    \  = Total jaehrliche Kosten      {x.xx}% = CHF {Betrag}/Jahr\n```\n\n**2.4 Spezial-Zerlegung nach Produkttyp:**\n\nFuer\
+    \ Versicherungs-Mantel (3b-Policen):\n- Versicherungskosten (Risikopraemie, Admin) vs. Sparanteil\n- Eingebettete Fondskosten\
+    \ auf dem Sparanteil\n- Rueckkaufswert-Verlust bei vorzeitiger Kuendigung\n\nFuer Strukturierte Produkte:\n- Emittenten-Marge\
+    \ (oft 1-3% implizit eingebettet)\n- Hedging-Kosten (Optionspraemien, Dividendenverzicht)\n- Coupon-Reduktion durch Kosten\n\
+    \nFuer Robo-Advisors:\n- All-in-Fee (Management-Gebuehr)\n- Plus eingebettete ETF-TERs (Doppelschicht!)\n- Rebalancing-Transaktionskosten\n\
+    \nNach Phase 2: Kosten-Wasserfall pro Produkt zur Bestaetigung.\n\n---\n\n### Phase 3 — Vergleich & Benchmark\n\nZiel:\
+    \ Jedes Produkt gegen die guenstigste Alternative benchmarken und das Einsparpotenzial berechnen.\n\n**3.1 Einzelprodukt-Benchmark:**\n\
+    \nVergleiche jedes Produkt mit der guenstigsten vergleichbaren Alternative:\n\n| Aktuelles Produkt | Benchmark-Alternative\
+    \ | Typischer Vergleich |\n|-------------------|----------------------|---------------------|\n| Aktiver Fonds (Aktien\
+    \ CH) | ETF auf gleichen Markt (z.B. iShares SPI, TER 0.10%) | TER-Differenz + Performance-Fee + Ausgabekommission |\n\
+    | Aktiver Fonds (Aktien Global) | ETF MSCI World (z.B. SPDR, TER 0.12%) | TER-Differenz + Tracking-Bilanz |\n| Bank-3a\
+    \ (Zinskonto) | VIAC/finpension (Wertschriften-3a) | Rendite-Differenz ueber Zeit |\n| Bank-3a (Wertschriften, ~1.0%)\
+    \ | finpension (All-in 0.39%) | Kosten-Differenz × Betrag |\n| Versicherungs-3b-Police | Kauf Risiko-Police separat +\
+    \ ETF-Sparplan | Gesamtkosten-Vergleich |\n| Bank-Vermoegensverwaltung (1.5%) | DIY-ETF-Portfolio (0.20%) | Kosten-Differenz\
+    \ × Betrag |\n| Robo-Advisor (0.60-0.80%) | DIY-ETF-Portfolio (0.20%) | Bequemlichkeitspraemie berechnen |\n| Strukturiertes\
+    \ Produkt | Direktanlage + Option (falls nachbildbar) | Implizite Marge aufzeigen |\n\n**3.2 Vergleichstabelle erstellen:**\n\
+    \n| Produkt | Aktuelle Kosten (p.a.) | Guenstigste Alternative | Kosten Alternative (p.a.) | Differenz (p.a.) | Differenz\
+    \ (CHF/Jahr) |\n|---------|----------------------|------------------------|--------------------------|-----------------|---------------------|\n\
+    | {Name} | {x.xx}% | {Alternative} | {x.xx}% | {x.xx}% | CHF {Betrag} |\n| ... | ... | ... | ... | ... | ... |\n| **Total\
+    \ Portfolio** | **{x.xx}%** | **Optimiertes Portfolio** | **{x.xx}%** | **{x.xx}%** | **CHF {Betrag}** |\n\n**3.3 Gesamtportfolio-Kosten\
+    \ vs. Benchmark:**\n\nVergleiche die Gesamtkosten mit drei Referenz-Modellen:\n\n| Modell | Typische Gesamtkosten p.a.\
+    \ | Beschreibung |\n|--------|---------------------------|-------------|\n| **DIY-ETF-Portfolio (Discount-Broker)** |\
+    \ 0.15-0.30% | Eigenstaendige Verwaltung, 5-8 Index-ETFs, Rebalancing selbst |\n| **Robo-Advisor (CH)** | 0.50-0.80% |\
+    \ Automatisierte Verwaltung, ETF-basiert, Rebalancing inklusive |\n| **Klassische Bankberatung (CH)** | 1.00-1.80% | Persoenliche\
+    \ Beratung, oft aktive Fonds, Retrozessionen |\n\n**3.4 Einsparpotenzial berechnen:**\n\n```\nAktuelles Portfolio:   \
+    \  CHF {Total} × {x.xx}% = CHF {Kosten}/Jahr\nOptimiertes Portfolio:   CHF {Total} × {x.xx}% = CHF {Kosten}/Jahr\n────────────────────────────────────────────────\n\
+    Jaehrliches Einsparpotenzial:  CHF {Differenz}/Jahr\n```\n\nNach Phase 3: Vergleichstabellen und Einsparpotenzial zur\
+    \ Bestaetigung.\n\n---\n\n### Phase 4 — Kostenwirkung ueber Zeit\n\nZiel: Simulieren, wie viel CHF durch Kosten ueber\
+    \ 10/20/30 Jahre verloren gehen. Der Zinseszins-Effekt der Kosten ist das Kernargument dieses Skills.\n\nVerwende `references/swiss-cost-reference.md`\
+    \ Abschnitt Zeitwirkungs-Formeln.\n\n**4.1 Rendite-Szenarien definieren:**\n\nDefiniere mit dem Nutzer eine erwartete\
+    \ Brutto-Rendite (vor Kosten):\n\n| Szenario | Brutto-Rendite | Typisch fuer |\n|----------|---------------|-------------|\n\
+    | Konservativ | 3.0% p.a. | Mischportfolio, hoher Obligationen-Anteil |\n| Moderat | 5.0% p.a. | Ausgewogenes Aktien/Obligationen-Portfolio\
+    \ |\n| Optimistisch | 7.0% p.a. | Aktien-lastiges Portfolio |\n\n**4.2 Compound-Cost-Simulation:**\n\nBerechne fuer jedes\
+    \ Kostenszenario (aktuell vs. optimiert) den Endwert:\n\n```\nFormel: Endwert = Startbetrag × (1 + Rendite_nach_Kosten)^Jahre\n\
+    \nRendite_nach_Kosten = Brutto_Rendite - Kosten_p.a.\n```\n\n**4.3 Zeitwirkungs-Tabelle (Hauptdarstellung):**\n\nErstelle\
+    \ die zentrale Zeitwirkungs-Tabelle:\n\n| Zeitraum | Aktuell ({x.xx}% Kosten) | Optimiert ({x.xx}% Kosten) | Differenz\
+    \ (CHF) | Differenz (%) |\n|----------|--------------------------|---------------------------|----------------|--------------|\n\
+    | Startbetrag | CHF {Betrag} | CHF {Betrag} | CHF 0 | 0% |\n| Nach 10 Jahren | CHF {Wert} | CHF {Wert} | CHF {Diff} |\
+    \ {x.x}% |\n| Nach 20 Jahren | CHF {Wert} | CHF {Wert} | CHF {Diff} | {x.x}% |\n| Nach 30 Jahren | CHF {Wert} | CHF {Wert}\
+    \ | CHF {Diff} | {x.x}% |\n\n**4.4 Rendite-nach-Kosten-Vergleich:**\n\n| Szenario | Brutto-Rendite | Kosten aktuell |\
+    \ Netto aktuell | Kosten optimiert | Netto optimiert | Rendite-Gewinn |\n|----------|---------------|---------------|--------------|-----------------|----------------|---------------|\n\
+    | Konservativ (3%) | 3.0% | {x.xx}% | {x.xx}% | {x.xx}% | {x.xx}% | +{x.xx}% |\n| Moderat (5%) | 5.0% | {x.xx}% | {x.xx}%\
+    \ | {x.xx}% | {x.xx}% | +{x.xx}% |\n| Optimistisch (7%) | 7.0% | {x.xx}% | {x.xx}% | {x.xx}% | {x.xx}% | +{x.xx}% |\n\n\
+    **4.5 Sparbeitrag-Simulation (optional):**\n\nFalls der Nutzer regelmaessig investiert, berechne auch den Effekt bei laufenden\
+    \ Sparbetraegen:\n\n```\nEndwert_Sparplan = Sparrate × ((1 + r_netto)^n - 1) / r_netto\n\nMit: r_netto = (Brutto_Rendite\
+    \ - Kosten) / 12 (monatlich)\n     n = Jahre × 12\n```\n\n| Sparrate CHF/Mt. | Zeitraum | Aktuell (Kosten {x.xx}%) | Optimiert\
+    \ (Kosten {x.xx}%) | Differenz |\n|-----------------|----------|--------------------------|---------------------------|-----------|\n\
+    | CHF {Betrag} | 10 Jahre | CHF {Wert} | CHF {Wert} | CHF {Diff} |\n| CHF {Betrag} | 20 Jahre | CHF {Wert} | CHF {Wert}\
+    \ | CHF {Diff} |\n| CHF {Betrag} | 30 Jahre | CHF {Wert} | CHF {Wert} | CHF {Diff} |\n\n**4.6 Kosten-Rendite-Verhältnis:**\n\
+    \nBerechne, welchen Anteil der Brutto-Rendite die Kosten auffressen:\n\n```\nKosten-Rendite-Verhaeltnis = Kosten_p.a.\
+    \ / Brutto_Rendite × 100%\n\nBeispiel: 1.5% Kosten bei 5% Brutto-Rendite → 30% der Rendite gehen an Kosten!\n```\n\nNach\
+    \ Phase 4: Zeitwirkungs-Tabellen und Simulationsergebnisse zur Bestaetigung.\n\n---\n\n### Phase 5 — Transparenz-Bericht\
+    \ & Optimierung\n\nErstelle zwei Ausgabedokumente:\n\n#### 5.1 Markdown-Bericht\n\nSpeichere als `kostentransparenz-{name}-{datum}.md`:\n\
+    \n```markdown\n# Kostentransparenz-Bericht — {Name}\n*Erstellt am {Datum}*\n\n## Disclaimer\nDieser Kostentransparenz-Bericht\
+    \ ersetzt keine professionelle Finanz- oder Anlageberatung.\nKostenvergleiche und Optimierungsvorschlaege sind Orientierungshilfen\
+    \ — vor einer Umsetzung\nsollte eine individuelle Pruefung erfolgen. Fuer eine verbindliche Beratung wende dich an\neinen\
+    \ zugelassenen Finanzberater.\n\n## 1. Analysierte Produkte\n\n| # | Produkt | Typ | ISIN | Betrag (CHF) | Broker |\n\
+    |---|---------|-----|------|-------------|--------|\n| 1 | ... | ETF | ... | ... | ... |\n| 2 | ... | Aktiver Fonds |\
+    \ ... | ... | ... |\n| ... | ... | ... | ... | ... | ... |\n| | **Total** | | | **CHF ...** | |\n\n## 2. Kosten-Zerlegung\n\
+    \n### Produkt 1: {Name}\n{Kosten-Wasserfall aus Phase 2}\n\n### Produkt 2: {Name}\n{Kosten-Wasserfall aus Phase 2}\n\n\
+    ### Portfolio-Gesamtkosten\n| Kostenart | Betrag / Rate |\n|-----------|-------------|\n| Gewichtete laufende Kosten (TER\
+    \ + versteckte Kosten) | {x.xx}% p.a. = CHF .../Jahr |\n| Depot-/Plattformkosten | CHF .../Jahr |\n| Geschaetzte Transaktionskosten\
+    \ (Rebalancing) | CHF .../Jahr |\n| **Jaehrliche Gesamtkosten** | **{x.xx}% p.a. = CHF .../Jahr** |\n\n## 3. Vergleich\
+    \ & Benchmark\n\n### Einzelprodukt-Vergleich\n| Produkt | Aktuelle Kosten | Guenstigste Alternative | Kosten Alternative\
+    \ | Differenz |\n|---------|---------------|------------------------|--------------------|-----------|\n| ... | ...% |\
+    \ ... | ...% | ...% |\n\n### Gesamtportfolio vs. Referenzmodelle\n| Modell | Kosten p.a. | vs. aktuelles Portfolio |\n\
+    |--------|------------|----------------------|\n| DIY-ETF (Discount-Broker) | 0.15-0.30% | ... |\n| Robo-Advisor (CH)\
+    \ | 0.50-0.80% | ... |\n| Klassische Bankberatung | 1.00-1.80% | ... |\n\n### Einsparpotenzial\nJaehrliches Einsparpotenzial:\
+    \ **CHF .../Jahr** ({x.xx}% → {x.xx}%)\n\n## 4. Kostenwirkung ueber Zeit\n\n### Szenario: Moderates Wachstum ({x}% Brutto-Rendite)\n\
+    | Zeitraum | Aktuell ({x.xx}% Kosten) | Optimiert ({x.xx}% Kosten) | Mehr Vermoegen |\n|----------|--------------------------|---------------------------|---------------|\n\
+    | Heute | CHF ... | CHF ... | CHF 0 |\n| 10 Jahre | CHF ... | CHF ... | **CHF ...** |\n| 20 Jahre | CHF ... | CHF ...\
+    \ | **CHF ...** |\n| 30 Jahre | CHF ... | CHF ... | **CHF ...** |\n\n### Rendite-nach-Kosten\n| Szenario | Brutto | Netto\
+    \ aktuell | Netto optimiert | Gewinn |\n|----------|--------|--------------|----------------|--------|\n| Konservativ\
+    \ (3%) | 3.0% | ...% | ...% | +...% |\n| Moderat (5%) | 5.0% | ...% | ...% | +...% |\n| Optimistisch (7%) | 7.0% | ...%\
+    \ | ...% | +...% |\n\n### Kosten-Rendite-Verhaeltnis\nAktuell fressen die Kosten **{x}%** der erwarteten Brutto-Rendite\
+    \ auf.\nNach Optimierung waeren es nur noch **{x}%**.\n\n## 5. Optimierungsvorschlaege\n\n### Sofortmassnahmen (hoechstes\
+    \ Einsparpotenzial)\n1. {Massnahme 1} → Einsparung: CHF .../Jahr\n2. {Massnahme 2} → Einsparung: CHF .../Jahr\n\n### Mittelfristige\
+    \ Massnahmen\n1. {Massnahme}\n2. {Massnahme}\n\n### Nicht empfohlen / abwaegen\n- {Massnahme, die wenig bringt oder Risiken\
+    \ hat}\n\n## 6. Annahmen & Methodik\n- Brutto-Rendite-Annahme: {x}% p.a. (vor Kosten, nominal)\n- Inflation: nicht beruecksichtigt\
+    \ (alle Werte nominal)\n- Kosten-Schaetzungen basieren auf oeffentlich verfuegbaren Daten (KIID/KID, Factsheets)\n- Tracking\
+    \ Difference und fondsintterne Transaktionskosten sind Schaetzwerte\n- Quellensteuer-Drag basiert auf Fondsdomizil und\
+    \ DBA-Situation\n- Stempelsteuer: CH-Saetze (0.075% CH / 0.150% Ausland)\n- Waehrungskosten: Geschaetzt basierend auf\
+    \ typischen Broker-Spreads\n```\n\n#### 5.2 JSON-Export\n\nSpeichere als `kostentransparenz-{name}-{datum}.json`:\n\n\
+    ```json\n{\n  \"meta\": {\n    \"erstellt\": \"YYYY-MM-DD\",\n    \"version\": \"1.0\",\n    \"waehrung\": \"CHF\",\n\
+    \    \"land\": \"CH\",\n    \"typ\": \"kostentransparenz\"\n  },\n  \"produkte\": [\n    {\n      \"name\": \"...\",\n\
+    \      \"typ\": \"etf\",\n      \"isin\": \"...\",\n      \"anbieter\": \"...\",\n      \"betrag\": 50000,\n      \"broker\"\
+    : \"...\",\n      \"kosten\": {\n        \"ter_pct\": 0.20,\n        \"ter_zerlegung\": {\n          \"verwaltung_pct\"\
+    : 0.12,\n          \"depotbank_pct\": 0.03,\n          \"index_lizenz_pct\": 0.02,\n          \"vertrieb_pct\": 0.00,\n\
+    \          \"sonstige_pct\": 0.03\n        },\n        \"transaktionskosten_intern_pct\": 0.03,\n        \"tracking_difference_pct\"\
+    : 0.05,\n        \"performance_fee_pct\": 0.00,\n        \"quellensteuer_drag_pct\": 0.00,\n        \"spread_pct\": 0.05,\n\
+    \        \"ausgabekommission_pct\": 0.00,\n        \"effektive_laufende_kosten_pct\": 0.28,\n        \"effektive_laufende_kosten_chf\"\
+    : 140,\n        \"einmalige_kosten_pct\": 0.20,\n        \"einmalige_kosten_chf\": 100,\n        \"depotgebuehr_chf\"\
+    : 0,\n        \"total_jaehrliche_kosten_pct\": 0.28,\n        \"total_jaehrliche_kosten_chf\": 140\n      },\n      \"\
+    benchmark\": {\n        \"alternative\": \"...\",\n        \"alternative_kosten_pct\": 0.15,\n        \"differenz_pct\"\
+    : 0.13,\n        \"differenz_chf\": 65\n      }\n    }\n  ],\n  \"portfolio_gesamt\": {\n    \"total_betrag\": 200000,\n\
+    \    \"gewichtete_laufende_kosten_pct\": 0.35,\n    \"depotkosten_chf\": 0,\n    \"rebalancing_kosten_chf\": 50,\n   \
+    \ \"total_jaehrliche_kosten_pct\": 0.38,\n    \"total_jaehrliche_kosten_chf\": 760\n  },\n  \"optimiert\": {\n    \"total_jaehrliche_kosten_pct\"\
+    : 0.18,\n    \"total_jaehrliche_kosten_chf\": 360,\n    \"einsparpotenzial_pct\": 0.20,\n    \"einsparpotenzial_chf\"\
+    : 400\n  },\n  \"zeitwirkung\": {\n    \"brutto_rendite_pct\": 5.0,\n    \"szenarien\": [\n      {\n        \"jahre\"\
+    : 10,\n        \"endwert_aktuell\": 0,\n        \"endwert_optimiert\": 0,\n        \"differenz_chf\": 0,\n        \"differenz_pct\"\
+    : 0\n      },\n      {\n        \"jahre\": 20,\n        \"endwert_aktuell\": 0,\n        \"endwert_optimiert\": 0,\n \
+    \       \"differenz_chf\": 0,\n        \"differenz_pct\": 0\n      },\n      {\n        \"jahre\": 30,\n        \"endwert_aktuell\"\
+    : 0,\n        \"endwert_optimiert\": 0,\n        \"differenz_chf\": 0,\n        \"differenz_pct\": 0\n      }\n    ],\n\
+    \    \"kosten_rendite_verhaeltnis_aktuell_pct\": 0,\n    \"kosten_rendite_verhaeltnis_optimiert_pct\": 0\n  },\n  \"optimierungsvorschlaege\"\
+    : [\n    {\n      \"massnahme\": \"...\",\n      \"kategorie\": \"sofort\",\n      \"einsparung_chf_jahr\": 0,\n     \
+    \ \"aufwand\": \"gering\"\n    }\n  ]\n}\n```\n\nSpeichere beide Dateien im aktuellen Workspace-Verzeichnis.\n\n---\n\n\
+    ## Wichtige Hinweise\n\n- **Keine Anlageberatung:** Weise den Nutzer zu Beginn und im Bericht darauf hin, dass dieser\
+    \ Kostentransparenz-Bericht keine professionelle Finanz- oder Anlageberatung ersetzt. Kostenvergleiche und Optimierungsvorschlaege\
+    \ sind Orientierungshilfen.\n- **Companion zu asset-allocation:** Wenn ein Portfolio-Blueprint vorliegt, importiere die\
+    \ Produktdaten. Empfehle bei Bedarf, zuerst den asset-allocation Skill zu durchlaufen.\n- **Konservative Kosten-Schaetzungen:**\
+    \ Verwende im Zweifel hoehere Kostenannahmen (besser konservativ als zu optimistisch). Mache Schaetzungen transparent.\n\
+    - **Tracking Difference statt TER:** Weise darauf hin, dass die Tracking Difference aussagekraeftiger ist als die TER.\
+    \ Verwende TD wo verfuegbar.\n- **Iterativ:** Der Nutzer kann jederzeit zurueckspringen und Produkte hinzufuegen/aendern.\n\
+    - **Laenderanpassung:** Wenn der Nutzer nicht in der Schweiz lebt, passe Stempelsteuer, Quellensteuer-Situation und Broker-Kosten\
+    \ an (z.B. Deutschland: kein Stempelsteuer, aber Vorabpauschale; Oesterreich: KESt).\n- **Datenschutz:** Alle Daten bleiben\
+    \ lokal. Es werden keine Daten an externe Dienste gesendet.\n- **Produktneutralitaet:** Die genannten Produkte und Alternativen\
+    \ sind Beispiele. Es besteht keine Verbindung zu Anbietern.\n- **Grenzen der Analyse:** Manche Kosten (fondsintterne Transaktionskosten,\
+    \ exakter Quellensteuer-Drag) koennen nur geschaetzt werden. Mache dies im Bericht transparent.\n"
+instructions:
+- name: swiss-cost-reference
+  description: 'Schweizer Kosten-Referenzdaten: TER-Anatomie, Kostenschichten nach Produkttyp, Broker-Vergleich, Zeitwirkungs-Formeln'
+  content: "# Schweizer Kosten-Referenzdaten fuer Anlageprodukte\n\nStand: 2025/2026. Alle Betraege in CHF sofern nicht anders\
+    \ angegeben.\n\n---\n\n## 1. TER-Anatomie: Was steckt in der TER?\n\n### Bestandteile der TER (Total Expense Ratio)\n\n\
+    | Komponente | Beschreibung | Typischer Anteil an TER |\n|-----------|-------------|------------------------|\n| **Verwaltungsgebuehr**\
+    \ | Fondsmanagement, Research, Portfolio-Management, Administration | 50-70% |\n| **Depotbankgebuehr (Custody)** | Verwahrung\
+    \ der Fondsvermoegen durch die Depotbank | 5-15% |\n| **Index-Lizenzgebuehr** | Lizenzkosten fuer die Nutzung eines Index\
+    \ (MSCI, FTSE, S&P, SPI etc.) — nur bei Index-ETFs/-Fonds | 3-10% |\n| **Vertriebsgebuehr / Retrozession** | Vergütung\
+    \ an Vertriebspartner (Bank, Berater) — v.a. bei aktiven Fonds ueber Bankvertrieb | 0-30% |\n| **Sonstige Kosten** | Revisionsstelle,\
+    \ regulatorische Kosten (FINMA/FCA), Rechtskosten, Druck | 5-10% |\n\n### Was ist NICHT in der TER enthalten?\n\n| Kostenschicht\
+    \ | Beschreibung | Typische Hoehe | Wo zu finden |\n|--------------|-------------|---------------|-------------|\n| **Transaktionskosten\
+    \ (fondsintern)** | Kauf-/Verkaufskosten bei Indexanpassungen, Rebalancing, Zu-/Abfluesse | 0.01-0.15% p.a. | Jahresbericht\
+    \ (PRIIPs KID seit 2023) |\n| **Bid-Ask-Spread** | Differenz Kauf-/Verkaufskurs beim Boersenhandel | 0.02-0.50% pro Trade\
+    \ | Boersendaten (SIX, Xetra) |\n| **Stempelsteuer (CH)** | Eidg. Umsatzabgabe bei Kauf/Verkauf | 0.075% CH / 0.150% Ausland\
+    \ | Gesetzlich festgelegt |\n| **Performance Fee** | Erfolgsabhaengige Gebuehr (nur aktive Fonds/Hedge Funds/PE) | 10-20%\
+    \ der Outperformance | Prospekt, KIID/KID |\n| **Swing Pricing** | Verwässerungsschutz: NAV-Anpassung bei grossen Mittelzu-/-abfluessen\
+    \ | 0-0.50% situativ | Prospekt |\n| **Ausgabekommission (Agio)** | Einmalgebuehr beim Kauf (v.a. aktive Fonds ueber Bankschalter)\
+    \ | 0-5% einmalig | Prospekt, Factsheet |\n| **Ruecknahmekommission** | Einmalgebuehr beim Verkauf | 0-1% einmalig | Prospekt\
+    \ |\n| **Quellensteuer-Drag** | Nicht rueckforderbare Quellensteuer je nach Fondsdomizil | 0-0.30% p.a. | Siehe Abschnitt\
+    \ Steuer-Kostenschicht |\n| **Waehrungsumrechnungs-Kosten** | Spread bei FX-Konversion durch Broker oder Fonds | 0.10-0.50%\
+    \ pro Konversion | Broker-Konditionen |\n\n---\n\n## 2. Kostenschichten nach Produkttyp\n\n### ETF (Index-Tracker)\n\n\
+    | Kostenschicht | Typisch | Bandbreite | Bemerkung |\n|--------------|---------|-----------|-----------|\n| TER | 0.10-0.25%\
+    \ | 0.05-0.50% | Physisch repliziert, UCITS |\n| Transaktionskosten intern | 0.01-0.05% | 0-0.15% | Gering bei Buy-and-Hold-Index\
+    \ |\n| Tracking Difference | 0.00-0.15% | -0.10 bis +0.30% | Kann durch Wertpapierleihe negativ sein |\n| Spread (Boerse)\
+    \ | 0.02-0.10% | 0.01-0.50% | Liquiditaetsabhaengig (Fondsgroesse, Handelsplatz) |\n| Quellensteuer-Drag | 0-0.15% | 0-0.30%\
+    \ | Je nach Domizil und DBA |\n| **Total laufend** | **0.13-0.55%** | | |\n\n### Aktiver Fonds\n\n| Kostenschicht | Typisch\
+    \ | Bandbreite | Bemerkung |\n|--------------|---------|-----------|-----------|\n| TER | 1.00-1.80% | 0.50-2.50% | Inkl.\
+    \ Verwaltung, Vertrieb, Depotbank |\n| Performance Fee | 0-0.50% | 0-20% der Outperformance | Nicht bei allen Fonds |\n\
+    | Transaktionskosten intern | 0.10-0.30% | 0.05-0.50% | Hoeher wegen aktivem Handel (Turnover) |\n| Ausgabekommission\
+    \ | 0-3% | 0-5% | Einmalig, oft verhandelbar |\n| Retrozession (an Bank/Berater) | 0.30-0.80% | 0-1.20% | Teil der TER,\
+    \ fliesst an Vertrieb |\n| Spread | 0.05-0.20% | | NAV-basiert bei Kauf ueber Fondsgesellschaft |\n| **Total laufend**\
+    \ | **1.10-2.60%** | | |\n\n### Versicherungs-Mantel (3b-Police / Fondsgebundene LV)\n\n| Kostenschicht | Typisch | Bandbreite\
+    \ | Bemerkung |\n|--------------|---------|-----------|-----------|\n| Versicherungskosten (Risiko + Admin) | 0.50-1.50%\
+    \ | 0.30-2.00% | Abgezogen vom Sparanteil |\n| Verwaltungskosten (Police) | 0.50-1.00% | 0.30-1.50% | Policenverwaltung,\
+    \ Abschlusskosten |\n| Eingebettete Fondskosten (TER) | 0.50-1.80% | 0.30-2.50% | TER der Fonds im Versicherungsmantel\
+    \ |\n| Rueckkaufswert-Abzug (bei Kuendigung) | 5-30% in den ersten Jahren | | Starke Bindung, degressiv ueber Laufzeit\
+    \ |\n| **Total laufend (auf Sparanteil)** | **1.50-4.30%** | | Haeufig intransparent |\n\n**Warnung:** Versicherungs-Mantel-Produkte\
+    \ haben die hoechsten Gesamtkosten aller Anlageprodukte. Die Kosten sind oft ueber verschiedene Dokumente verstreut und\
+    \ schwer zu aggregieren.\n\n### Strukturiertes Produkt\n\n| Kostenschicht | Typisch | Bandbreite | Bemerkung |\n|--------------|---------|-----------|-----------|\n\
+    | Emittenten-Marge | 1.00-3.00% | 0.50-5.00% | Implizit im Ausgabepreis, nicht separat ausgewiesen |\n| Hedging-Kosten\
+    \ | 0.20-1.00% | | Optionspraemien, Dividendenverzicht |\n| Spread (Sekundaermarkt) | 0.50-2.00% | 0.20-5.00% | Oft illiquide,\
+    \ breiter Spread |\n| Coupon-Reduktion | indirekt | | Coupon niedriger als bei Direktanlage |\n| **Implizite Gesamtkosten**\
+    \ | **1.70-6.00%** | | Schwer zu durchschauen |\n\n### Robo-Advisor (CH)\n\n| Kostenschicht | Typisch | Bandbreite | Bemerkung\
+    \ |\n|--------------|---------|-----------|-----------|\n| Management-/Plattform-Fee | 0.40-0.60% | 0.25-0.80% | All-in-Fee\
+    \ des Anbieters |\n| Eingebettete ETF-Kosten (TER) | 0.10-0.25% | 0.05-0.40% | TER der verwendeten ETFs (Doppelschicht!)\
+    \ |\n| Rebalancing-Transaktionskosten | 0.02-0.05% | 0-0.10% | Meist in All-in-Fee enthalten |\n| Stempelsteuer | 0.075-0.15%\
+    \ | | Pro Trade, bei Rebalancing relevant |\n| **Total laufend** | **0.52-0.90%** | | |\n\n**CH Robo-Advisor Uebersicht:**\n\
+    \n| Anbieter | Management Fee | Eingebettete ETF-TER | Total geschaetzt | Mindestanlage |\n|----------|---------------|---------------------|-----------------|---------------|\n\
+    | True Wealth | 0.50% | ~0.13% | ~0.63% | CHF 8'500 |\n| Selma Finance | 0.68% | ~0.15% | ~0.83% | CHF 2'000 |\n| Findependent\
+    \ | 0.40% | ~0.15% | ~0.55% | CHF 500 |\n| Inyova | 0.60-1.20% | — (Einzeltitel) | 0.60-1.20% | CHF 2'000 |\n| Descartes\
+    \ Vorsorge | 0.48% | ~0.20% (DFA) | ~0.68% | CHF 500 |\n\n### Bank-Vermoegensverwaltung (Mandat)\n\n| Kostenschicht |\
+    \ Typisch | Bandbreite | Bemerkung |\n|--------------|---------|-----------|-----------|\n| Verwaltungsmandat-Gebuehr\
+    \ | 0.80-1.50% | 0.50-2.00% | Je nach Bank und Mandatsgroesse |\n| Eingebettete Fondskosten | 0.50-1.50% | 0.20-2.00%\
+    \ | Oft hauseigene, teurere Fonds |\n| Courtagen (Umschichtungen) | 0.10-0.30% | 0-0.50% | Hauseigene Trades, teils in\
+    \ Mandat inkl. |\n| Retrozessionen | 0.20-0.60% | 0-1.00% | Kickbacks von Fondsanbietern an Bank |\n| **Total laufend**\
+    \ | **1.60-3.90%** | | Seit BGer-Urteil: Retrozessionen offenzulegen |\n\n### Saeule-3a-Wertschriftenloesung\n\n| Kostenschicht\
+    \ | Typisch | Bandbreite | Bemerkung |\n|--------------|---------|-----------|-----------|\n| All-in-Fee (digital) | 0.39-0.53%\
+    \ | 0.39-0.80% | VIAC, finpension, frankly |\n| All-in-Fee (Bank-3a) | 0.80-1.50% | 0.50-2.00% | Traditionelle Banken\
+    \ |\n| Eingebettete Fondskosten | in All-in inkl. | | Bei digitalen Anbietern in Gebuehr enthalten |\n| Depot-/Kontofuehrung\
+    \ | CHF 0 | | Bei den meisten Anbietern gratis |\n| Wechselgebuehr (bei Anbieterwechsel) | CHF 0-50 | | Manche Banken\
+    \ berechnen Transfergebuehr |\n\n---\n\n## 3. Typische Kostenhoehen Schweiz\n\n### TER-Bandbreiten nach Anlageklasse und\
+    \ Produkttyp\n\n| Anlageklasse | ETF guenstig | ETF mittel | Aktiver Fonds mittel | Aktiver Fonds teuer |\n|-------------|-------------|-----------|---------------------|---------------------|\n\
+    | Aktien CH | 0.10% | 0.25% | 1.20% | 1.80% |\n| Aktien Global | 0.12% | 0.20% | 1.40% | 2.00% |\n| Aktien EM | 0.18%\
+    \ | 0.25% | 1.60% | 2.20% |\n| Obligationen CHF | 0.10% | 0.15% | 0.60% | 1.00% |\n| Obligationen Global | 0.10% | 0.15%\
+    \ | 0.80% | 1.20% |\n| Immobilien CH | 0.25% | 0.50% | — | — |\n| Gold/Rohstoffe | 0.12% | 0.23% | — | — |\n\n### Broker-Courtagen\
+    \ und Depotgebuehren (CH)\n\n| Broker | Courtage CH | Courtage Ausland | Depotgebuehr | Stempelsteuer | FX-Kosten |\n\
+    |--------|------------|-----------------|-------------|---------------|-----------|\n| Swissquote | CHF 9-29 | CHF 15-49\
+    \ | Kostenlos | Ja | 0.95% Spread |\n| DEGIRO | ab EUR 1 + 0.03% | ab EUR 2 + 0.03% | Kostenlos | Nein (NL) | 0.25% |\n\
+    | Interactive Brokers | ab USD 1 | ab USD 1 | Kostenlos (ab USD 100k) | Nein (US) | 0.002% (!) |\n| PostFinance | CHF\
+    \ 15-25 | CHF 25-40 | CHF 72/Jahr | Ja | ~0.50% |\n| Yuh (Swissquote) | 0.5% | 0.5% | Kostenlos | Ja | In Courtage inkl.\
+    \ |\n| neon invest | CHF 0.50 (ETFs) | n/a | Kostenlos | Ja | n/a (nur CHF) |\n| Saxo Bank (CH) | ab CHF 3 | ab CHF 5\
+    \ | Kostenlos | Ja | 0.25% |\n| Cornèrtrader | ab CHF 9.90 | ab CHF 14.90 | Kostenlos | Ja | 0.50% |\n\n### Stempelsteuer\
+    \ (Eidg. Umsatzabgabe)\n\n| Wertschrift | Satz | Anwendung |\n|-------------|------|-----------|\n| Schweizer Wertschriften\
+    \ | 0.075% | Pro Kauf ODER Verkauf |\n| Auslaendische Wertschriften | 0.150% | Pro Kauf ODER Verkauf |\n| Befreit | 0%\
+    \ | Saeule 3a, Pensionskasse, gewisse Geldmarktinstrumente |\n\n**Hinweis:** Broker mit Sitz im Ausland (DEGIRO, Interactive\
+    \ Brokers) erheben keine Schweizer Stempelsteuer. CH-Anleger muessen pruefen, ob sie diese dennoch schulden (in der Praxis\
+    \ wird dies bei Privatanlegern selten nachverfolgt).\n\n### Spread-Bandbreiten nach Instrumententyp\n\n| Instrument |\
+    \ Typischer Spread | Spread eng | Spread weit |\n|-----------|-----------------|-----------|------------|\n| Grosser ETF\
+    \ (>10 Mrd. AuM, an SIX) | 0.02-0.05% | 0.01% | 0.10% |\n| Mittlerer ETF (1-10 Mrd. AuM) | 0.05-0.15% | 0.03% | 0.25%\
+    \ |\n| Kleiner ETF (<1 Mrd. AuM) | 0.10-0.30% | 0.05% | 0.50% |\n| SMI-Aktien (Blue Chips) | 0.02-0.05% | 0.01% | 0.10%\
+    \ |\n| SPI-Mid/Small-Caps | 0.10-0.50% | 0.05% | 1.00% |\n| Schweizer Immobilienfonds | 0.10-0.50% | 0.05% | 1.00% |\n\
+    | Strukturierte Produkte | 0.50-2.00% | 0.20% | 5.00% |\n\n---\n\n## 4. Tracking Difference vs. TER\n\n### Warum Tracking\
+    \ Difference (TD) aussagekraeftiger ist als TER\n\nDie **TER** zeigt nur die ausgewiesenen laufenden Kosten. Die **Tracking\
+    \ Difference** (TD) zeigt die tatsaechliche Renditeabweichung vom Index und erfasst damit auch:\n\n| In TD enthalten,\
+    \ NICHT in TER | Wirkung |\n|-------------------------------|---------|\n| Fondsinterne Transaktionskosten | Negativ (erhoeht\
+    \ Kosten) |\n| Wertpapierleihe-Ertraege | Positiv (senkt effektive Kosten) |\n| Quellensteuer-Behandlung | Kann positiv\
+    \ oder negativ sein |\n| Sampling-Effekte (bei Sampling-Replikation) | Kann positiv oder negativ sein |\n| Cash-Drag (Liquiditaetshaltung\
+    \ im Fonds) | Negativ |\n\n### Beispiele TD vs. TER\n\n| ETF | TER | TD (5-Jahres-Durchschnitt) | Kommentar |\n|-----|-----|---------------------------|-----------|\n\
+    | iShares Core MSCI World (IE00B4L5Y983) | 0.20% | ~0.05-0.10% | TD deutlich besser als TER (Wertpapierleihe!) |\n| Vanguard\
+    \ FTSE Developed World (IE00BK5BQV03) | 0.12% | ~0.10-0.15% | TD nahe an TER |\n| iShares Core SPI (CH0237935652) | 0.10%\
+    \ | ~0.10-0.15% | TD leicht ueber TER |\n| iShares Core MSCI EM IMI (IE00BKM4GZ66) | 0.18% | ~0.20-0.35% | TD ueber TER\
+    \ (EM schwieriger zu replizieren) |\n\n**Faustregel:**\n- Bei grossen ETFs auf entwickelte Maerkte: TD oft besser als\
+    \ TER (dank Wertpapierleihe)\n- Bei EM-ETFs: TD typischerweise hoeher als TER (Transaktionskosten, Quellensteuer)\n- Bei\
+    \ aktiven Fonds: TD-Konzept nicht direkt anwendbar (kein Index als Benchmark, aber Tracking Error relevant)\n\n---\n\n\
+    ## 5. Steuer-Kostenschicht\n\n### Verrechnungssteuer (CH)\n\n| Situation | Steuersatz | Rueckforderbar? |\n|-----------|-----------|----------------|\n\
+    | Dividenden von CH-Aktien/-Fonds | 35% | Ja, via Steuererklaerung (DE: via DA-1) |\n| Nicht deklarierte CH-Ertraege |\
+    \ 35% | Nein (definitiv) |\n\n**Kosten-Wirkung:** Keine direkte Kostenwirkung fuer steuerehrliche CH-Anleger, da voll\
+    \ rueckforderbar. Aber: Liquiditaetsnachteil (Vorfinanzierung bis Rueckerstattung, ca. 6-18 Monate).\n\n### Quellensteuer-Drag\
+    \ je nach Fondsdomizil\n\nDie Quellensteuer auf Dividenden innerhalb eines Fonds haengt vom Fondsdomizil und den Doppelbesteuerungsabkommen\
+    \ (DBA) ab:\n\n| Anlageregion | Fondsdomizil Irland | Fondsdomizil Luxemburg | Fondsdomizil Schweiz | Direktanlage (CH-Anleger)\
+    \ |\n|-------------|--------------------|-----------------------|---------------------|--------------------------|\n|\
+    \ **US-Aktien** | 15% (DBA US-IE) | 15-30% (DBA US-LU) | 30% (kein vorteilhaftes DBA) | 15% (DBA US-CH, via DA-1) |\n\
+    | **EU-Aktien** | 0-15% | 0-15% | 15-30% | 0-15% (via DBA, DA-1) |\n| **CH-Aktien** | 0% (kein QSt fuer IE-Fonds) | 0%\
+    \ | 0% (steuertransparent) | 35% (rueckforderbar) |\n| **EM-Aktien** | 5-20% | 5-20% | 10-30% | Variabel, oft nicht rueckforderbar\
+    \ |\n\n**Geschaetzter Quellensteuer-Drag (p.a.) auf Fondsebene:**\n\n| Szenario | Dividendenrendite | QSt-Verlust | Drag\
+    \ p.a. |\n|----------|------------------|------------|-----------|\n| US-Aktien via IE-ETF | ~1.5% | 15% der Dividenden\
+    \ | ~0.22% |\n| US-Aktien via CH-Fonds | ~1.5% | 30% der Dividenden | ~0.45% |\n| MSCI World via IE-ETF (gemischt) | ~2.0%\
+    \ | ~10% effektiv | ~0.20% |\n| EM via IE-ETF | ~2.5% | ~15% effektiv | ~0.38% |\n\n**Optimierung:** Irland-domizilierte\
+    \ ETFs fuer US-Aktien → spart ca. 0.20% p.a. gegenueber CH-domizilierten Fonds.\n\n### Stempelsteuer-Wirkung\n\n| Szenario\
+    \ | Trades/Jahr | Durchschn. Satz | Jaehrliche Stempelsteuer-Last |\n|----------|------------|----------------|------------------------------|\n\
+    | Buy-and-Hold (1 Kauf) | 1 | 0.15% | 0.15% einmalig (0.015% p.a. ueber 10 Jahre) |\n| Jaehrliches Rebalancing (4 Trades)\
+    \ | 4 | 0.12% (gemischt) | ~0.05% p.a. |\n| Aktiver Handel (20 Trades) | 20 | 0.12% | ~0.24% p.a. |\n| Robo-Advisor (8\
+    \ Trades) | 8 | 0.12% | ~0.10% p.a. |\n\n---\n\n## 6. Zeitwirkungs-Formeln\n\n### Grundformel: Compound Cost Effect\n\n\
+    ```\nEndwert = Startbetrag × (1 + Rendite_netto)^Jahre\n\nRendite_netto = Rendite_brutto - Kosten_p.a.\n\nKosten_Verlust\
+    \ = Endwert_ohne_Kosten - Endwert_mit_Kosten\n               = Startbetrag × [(1 + r_brutto)^n - (1 + r_netto)^n]\n```\n\
+    \n### Sparplan-Formel (regelmaessige Einzahlungen)\n\n```\nEndwert_Sparplan = Sparrate × [(1 + r_monatlich)^m - 1] / r_monatlich\n\
+    \nMit: r_monatlich = (1 + r_netto_jaehrlich)^(1/12) - 1\n     m = Jahre × 12\n```\n\n### Referenztabelle: Kostenwirkung\
+    \ ueber Zeit\n\n**Startbetrag CHF 100'000, Brutto-Rendite 5.0% p.a.:**\n\n| Kosten p.a. | Netto-Rendite | 10 Jahre | 20\
+    \ Jahre | 30 Jahre | Verlust vs. 0% Kosten (30J) |\n|------------|--------------|----------|----------|----------|------------------------------|\n\
+    | 0.00% | 5.00% | 162'889 | 265'330 | 432'194 | CHF 0 (Referenz) |\n| 0.20% | 4.80% | 159'585 | 254'675 | 406'400 | CHF\
+    \ 25'794 (6.0%) |\n| 0.50% | 4.50% | 155'297 | 241'171 | 374'532 | CHF 57'662 (13.3%) |\n| 0.80% | 4.20% | 151'107 | 228'340\
+    \ | 345'035 | CHF 87'159 (20.2%) |\n| 1.00% | 4.00% | 148'024 | 219'112 | 324'340 | CHF 107'854 (25.0%) |\n| 1.50% | 3.50%\
+    \ | 141'060 | 198'979 | 280'679 | CHF 151'515 (35.1%) |\n| 2.00% | 3.00% | 134'392 | 180'611 | 242'726 | CHF 189'468 (43.8%)\
+    \ |\n| 2.50% | 2.50% | 128'008 | 163'862 | 209'757 | CHF 222'437 (51.5%) |\n\n**Interpretation:**\n- 0.20% Kosten (guenstiger\
+    \ ETF): Verliert ueber 30 Jahre CHF 25'794 (6% des moeglichen Endwerts)\n- 1.00% Kosten (Robo/aktiver Fonds): Verliert\
+    \ ueber 30 Jahre CHF 107'854 (25%!)\n- 2.00% Kosten (teure Bankberatung): Verliert ueber 30 Jahre CHF 189'468 (44%!)\n\
+    \n### Referenztabelle: Sparplan-Wirkung\n\n**Sparrate CHF 1'000/Monat, Brutto-Rendite 5.0% p.a.:**\n\n| Kosten p.a. |\
+    \ 10 Jahre | 20 Jahre | 30 Jahre | Verlust vs. 0% Kosten (30J) |\n|------------|----------|----------|----------|------------------------------|\n\
+    | 0.00% | 155'282 | 407'538 | 818'869 | CHF 0 (Referenz) |\n| 0.20% | 153'413 | 398'416 | 790'798 | CHF 28'071 (3.4%)\
+    \ |\n| 0.50% | 150'738 | 385'493 | 751'053 | CHF 67'816 (8.3%) |\n| 1.00% | 146'481 | 365'096 | 693'237 | CHF 125'632\
+    \ (15.3%) |\n| 1.50% | 142'359 | 345'924 | 640'483 | CHF 178'386 (21.8%) |\n| 2.00% | 138'367 | 327'906 | 592'396 | CHF\
+    \ 226'473 (27.7%) |\n\n### Kosten-Rendite-Verhaeltnis\n\nDas Kosten-Rendite-Verhaeltnis zeigt, welchen Anteil der Brutto-Rendite\
+    \ die Kosten auffressen:\n\n| Brutto-Rendite | Kosten 0.20% | Kosten 0.50% | Kosten 1.00% | Kosten 1.50% | Kosten 2.00%\
+    \ |\n|---------------|-------------|-------------|-------------|-------------|-------------|\n| 3.0% | 6.7% | 16.7% |\
+    \ 33.3% | 50.0% | 66.7% |\n| 5.0% | 4.0% | 10.0% | 20.0% | 30.0% | 40.0% |\n| 7.0% | 2.9% | 7.1% | 14.3% | 21.4% | 28.6%\
+    \ |\n\n**Kernaussage:** Bei 5% Brutto-Rendite und 1.5% Kosten gehen **30% der gesamten Rendite** an Gebuehren. Bei 3%\
+    \ Brutto-Rendite (konservatives Portfolio) sind es sogar **50%**.\n\n---\n\n## 7. Benchmark-Kosten: Referenzmodelle\n\n\
+    ### DIY-ETF-Portfolio (Discount-Broker)\n\n| Kostenart | Typisch | Bandbreite |\n|-----------|---------|-----------|\n\
+    | Gewichtete TER | 0.12-0.18% | 0.08-0.25% |\n| Depotgebuehr | CHF 0 | CHF 0-72 |\n| Rebalancing-Kosten (2-4 Trades/Jahr)\
+    \ | 0.01-0.03% | 0-0.05% |\n| Stempelsteuer | 0.01-0.03% | 0-0.05% |\n| **Total p.a.** | **0.15-0.25%** | **0.10-0.35%**\
+    \ |\n\n**Setup:** 5-8 Index-ETFs, Discount-Broker (Swissquote/IBKR/neon), jaehrliches Rebalancing, Cash-Flow-Rebalancing\
+    \ bevorzugt.\n\n### Robo-Advisor (CH)\n\n| Kostenart | Typisch | Bandbreite |\n|-----------|---------|-----------|\n|\
+    \ Management Fee | 0.40-0.60% | 0.25-0.80% |\n| Eingebettete ETF-TER | 0.10-0.20% | 0.05-0.30% |\n| Stempelsteuer/Transaktionen\
+    \ | 0.02-0.08% | 0-0.15% |\n| **Total p.a.** | **0.55-0.85%** | **0.40-1.20%** |\n\n**Mehrwert gegenueber DIY:** Automatisches\
+    \ Rebalancing, Steueroptimierung (je nach Anbieter), geringerer Zeitaufwand, Verhaltens-Coaching (verhindert Panikverkaeufe).\n\
+    \n### Klassische Bankberatung (CH)\n\n| Kostenart | Typisch | Bandbreite |\n|-----------|---------|-----------|\n| Beratungs-/Mandatsgebuehr\
+    \ | 0.80-1.20% | 0.50-1.50% |\n| Eingebettete Fondskosten | 0.80-1.50% | 0.30-2.00% |\n| Retrozessionen (ggf. zusaetzlich)\
+    \ | 0.20-0.50% | 0-0.80% |\n| Courtagen | 0.05-0.15% | 0-0.30% |\n| Stempelsteuer | 0.03-0.08% | 0-0.15% |\n| **Total\
+    \ p.a.** | **1.20-1.80%** | **0.80-3.50%** |\n\n**Seit BGer-Urteil 4A_127/2012:** Retrozessionen gehoeren dem Kunden,\
+    \ muessen offengelegt und herausgegeben werden (ausser ausdruecklicher Verzicht). Viele Banken haben daher auf \"All-in-Fees\"\
+    \ umgestellt, die hoher sind als die frueheren Mandatsgebuehren, dafuer transparenter.\n\n---\n\n## 8. Vergleich Saeule-3a-Kosten\n\
+    \n| Anbieter | Typ | All-in-Kosten | Aktienanteil max. | Rendite-Vorteil vs. Zinskonto* |\n|----------|-----|-------------|-------------------|-------------------------------|\n\
+    | Sparkonto (Bank) | Zinskonto | ~0% (aber ~0.5% Zins) | 0% | Referenz |\n| UBS Vitainvest | Bank-3a | ~1.20% | 75% |\
+    \ Rendite-Potenzial hoch, aber teure Kosten |\n| CS/ZKB traditionell | Bank-3a | ~1.00-1.50% | 45-75% | Aehnlich UBS |\n\
+    | **VIAC** | Digital-3a | **0.39-0.52%** | 97% | ~0.5-0.8% p.a. weniger Kosten als Bank |\n| **finpension** | Digital-3a\
+    \ | **0.39%** | 99% | Guenstigster Anbieter |\n| **frankly (ZKB)** | Digital-3a | **0.44-0.53%** | 95% | Sehr guenstig\
+    \ |\n| Descartes | Digital-3a | 0.48% | 97% | Faktor-Investing (DFA) |\n\n*Ueber 30 Jahre Anlagehorizont, bei 5% Brutto-Rendite:\n\
+    - Bank-3a (1.20% Kosten, 3.80% netto): CHF 100'000 → CHF 306'567\n- finpension (0.39% Kosten, 4.61% netto): CHF 100'000\
+    \ → CHF 385'765\n- **Differenz: CHF 79'198 (26% mehr Vermoegen!)**\n"
